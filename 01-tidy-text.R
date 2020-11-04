@@ -167,3 +167,46 @@ cor.test(data = frequency[frequency$author == "Brontë Sisters",],
 cor.test(data = frequency[frequency$author == "H.G. Wells",],
          ~ proportion + `Jane Austen`)
 
+## Own example: Alice
+
+alice <- gutenberg_download(11)
+
+tidy_alice <- alice %>%
+  unnest_tokens(word, text) %>%
+  anti_join(stop_words)
+
+tidy_alice %>%
+  count(word, sort = TRUE)
+
+library(ggplot2)
+
+tidy_alice %>%
+  count(word, sort = TRUE) %>%
+  filter(n > 50) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip()
+
+count_alice <- tidy_alice %>%
+  count(word, sort = TRUE)
+
+count_wells <- tidy_hgwells %>%
+  count(word, sort = TRUE)
+
+library(ggplot2)
+
+# Error in data.frame(count_alice$n, count_wells$n) :
+# arguments imply differing number of rows: 2165, 11769
+# let's prune
+
+count_wells <- count_wells[1:2165,]
+
+# df <- data.frame(count_alice$n,count_wells$n)
+
+cor(count_alice$n, count_wells$n, method = "spearman")
+
+cor.test(count_alice$n, count_wells$n, method = "spearman", alternative = "greater")
+
+
