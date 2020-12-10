@@ -1,0 +1,8 @@
+base
+knitr
+ggplot2
+janeaustenr
+dplyr
+stringr
+tidytext
+gutenbergr
